@@ -1,51 +1,38 @@
 function generateActorDiv(toappend) {
     var name = toappend.html();
+
     var div = $("<div class='castlist-info'></div>");
+    div.append("<h2 class='castlist-info-name'>" + name + "</h2>");
+    div.append("<img class='castlist-info-img' src='' />");
+    div.append("<div class='castlist-info-desc'></div>");
+    div.append("<p class='castlist-info-link'><a href=''>More on " + name + " from <em>The Times</em></a></p>");
 
-    var css = {
-        "position": "absolute",
+    toappend.after(div.css({
         "left": event.pageX,
-        "top": event.pageY,
-        "z-index": 100,
-        "background-color": "white",
-        "border": "1px solid black"
-    };
+        "top": event.pageY
+    }));
 
-    toappend.after(div.css(css));
-
-    queryMySQL(div, name);
-    queryWikipediaImg(div, name);
+    queryMySQL(name);
+    queryWikipediaImg(name);
 }
 
-function queryMySQL(div, name) {
+function queryMySQL(name) {
     var url = 'http://46.101.38.33/?service=single&name=' + name;
 
     $.ajax({
         url: url,
         crossDomain: false,
         success: function(data) {
-            html = "";
+            data = data[0];
+            $("p.castlist-info-link a").attr("href", data.search_link);
 
-            if (data == "") html += "No information found for " + name;
-            else {
-                data = data[0];
-                html += "<p><h2>" + name + "</h2></p>";
-                html += "<p><strong>Age:</strong> " + data.age + "</p>";
-                html += "<p><a href='" + data.search_link + "'>Stories</a>";
-
-                if (data.description) {
-                    html += "<p><strong>Bio:</strong> " + data.description + "</p>";
-                } else {
-                    queryWikipediaDesc(div, name);
-                }
-
-                div.append(html);
-            }
+            if (data.description) $("div.castlist-info-desc").html(data.description);
+            else queryWikipediaDesc(name);
         }
     });
 }
 
-function queryWikipediaDesc(div, name) {
+function queryWikipediaDesc(name) {
     $.getJSON("http://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&redirects=true&titles=" + name + "&callback=?",
         function(data) {
             
@@ -60,15 +47,13 @@ function queryWikipediaDesc(div, name) {
 
             var end = desc.indexOf("</p>");
             desc = desc.substr(0, end+4)
-            html = "<p><strong>Bio:</strong> " + desc + "</p>";
-            div.append(html);
+            $("div.castlist-info-desc").html(desc);
         });
 }
 
-function queryWikipediaImg(div, name) {
+function queryWikipediaImg(name) {
     $.getJSON("http://en.wikipedia.org/w/api.php?format=json&action=query&prop=pageimages&redirects=true&titles=" + name + "&callback=?",
         function(data) {
-            
             var url = "";
             var first = true;
             $.each(data['query']['pages'], function(i, val) {
@@ -78,8 +63,7 @@ function queryWikipediaImg(div, name) {
                 }
             });
 
-            html = "<img src='" + url + "' />";
-            div.append(html);
+            $("img.castlist-info-img").attr("src", url);
         });
 }
 

@@ -1,0 +1,40 @@
+div.castlist-info {
+    font-family: "Times New Roman, serif";
+    position: absolute;
+    z-index: 100;
+    background-color: #eee;
+    border: 1px solid black;
+    padding: 10px;
+    margin: 0;
+    max-width: 45%;
+}
+    h2.castlist-info-name {
+        width: 100%;
+        text-align: center;
+        font-weight: 200;
+    }
+
+    p.castlist-info-link {
+        width: 100%;
+        border-top: 1px dotted black;
+        padding-top: 15px;
+        float: left;
+        text-align: center;
+    }
+        p.castlist-info-link a {
+            color: green;
+        }
+
+    img.castlist-info-img {
+        width: 20%;
+        float: left;
+    }
+
+    div.castlist-info-desc {
+        width: 75%;
+        float: right;
+    }
+        div.castlist-info-desc p {
+            margin: 0;
+            padding: 0;
+        }
