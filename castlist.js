@@ -2,7 +2,8 @@ function generateActorDiv(toappend) {
     var name = toappend.html();
 
     var div = $("<div class='castlist-info'></div>");
-    div.append("<h2 class='castlist-info-name'>" + name + "</h2>");
+    div.append("<a href='' class='castlist-info-close'>Close</a>")
+    div.append("<h1 class='castlist-info-name'>" + name + "</h1>");
     div.append("<img class='castlist-info-img' src='' />");
     div.append("<div class='castlist-info-desc'></div>");
     div.append("<p class='castlist-info-link'><a href=''>More on " + name + " from <em>The Times</em></a></p>");
@@ -11,6 +12,11 @@ function generateActorDiv(toappend) {
         "left": event.pageX,
         "top": event.pageY
     }));
+
+    $("a.castlist-info-close").click(function(event) {
+        event.preventDefault();
+        $("div.castlist-info").remove();
+    });
 
     queryMySQL(name);
     queryWikipediaImg(name);
@@ -54,16 +60,31 @@ function queryWikipediaDesc(name) {
 function queryWikipediaImg(name) {
     $.getJSON("http://en.wikipedia.org/w/api.php?format=json&action=query&prop=pageimages&redirects=true&titles=" + name + "&callback=?",
         function(data) {
-            var url = "";
+            var img_page_url = "";
             var first = true;
             $.each(data['query']['pages'], function(i, val) {
                 if (first) {
-                    url = val['thumbnail']['source'];
+                    img_page_url = val['pageimage'];
                     first = false;
                 }
             });
 
-            $("img.castlist-info-img").attr("src", url);
+            img_page_url = "File:" + img_page_url;
+
+            $.getJSON("http://en.wikipedia.org/w/api.php?format=json&action=query&prop=imageinfo&iiprop=url&titles=" + img_page_url + "&callback=?",
+                function(data) {
+                    var img_url = "";
+                    var first = true;
+                    $.each(data['query']['pages'], function(i, val) {
+                        if (first) {
+                            img_url = val['imageinfo'][0]['url'];
+                            first = false;
+                            console.log(val);
+                        }
+                    });
+
+                    $("img.castlist-info-img").attr("src", img_url);
+                });
         });
 }
 
