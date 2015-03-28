@@ -29,11 +29,20 @@ function queryMySQL(name) {
         url: url,
         crossDomain: false,
         success: function(data) {
-            data = data[0];
-            $("p.castlist-info-link a").attr("href", data.search_link);
+            if (data == "") {
+                var search_link = "http://www.thetimes.co.uk/tto/public/sitesearch.do?querystring=";
+                search_link += name + "&x=0&y=0&p=tto&pf=all&bl=on#/tto/public/sitesearch.do?querystring=";
+                search_link += name + "&offset=0&hits=0&sortby=date&order=DESC&bl=on&service=searchframe";
+                
+                $("p.castlist-info-link a").attr("href", search_link);
+                queryWikipediaDesc(name);
+            } else {
+                data = data[0];
+                $("p.castlist-info-link a").attr("href", data.search_link);
 
-            if (data.description) $("div.castlist-info-desc").html(data.description);
-            else queryWikipediaDesc(name);
+                if (data.description) $("div.castlist-info-desc").html(data.description);
+                else queryWikipediaDesc(name);
+            }
         }
     });
 }
