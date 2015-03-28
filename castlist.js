@@ -1,3 +1,25 @@
+function tagNames(text) {
+    var url = "http://access.alchemyapi.com/calls/html/HTMLGetRankedNamedEntities";
+    url += "?apikey=a5c2da39dc22ae367ecae6192dbc0832c19fe087";
+    url += "&html=" + encodeURIComponent(text);
+    url += "&outputMode=json";
+
+    $.get(url, function(data){
+        var names = [];
+        for (var i = 0; i < data.entities.length; i++) {
+            if (data.entities[i].type == "Person") names.push(data.entities[i].text);
+        }
+        console.log(names);
+
+        for (var i = 0; i < names.length; i++) {
+            // find names in text and surround with <a href="#" class="castlist-actor"></a>
+        }
+    });
+}
+
+var text = $('div.contentpage.currentpage').html();
+tagNames(text);
+
 function generateActorDiv(toappend) {
     var name = toappend.html();
 
