@@ -1,27 +1,37 @@
 function tagNames(text) {
-    var url = "http://access.alchemyapi.com/calls/html/HTMLGetRankedNamedEntities";
-    url += "?apikey=a5c2da39dc22ae367ecae6192dbc0832c19fe087";
-    url += "&html=" + encodeURIComponent(text);
-    url += "&outputMode=json";
+    console.log(text);
+    $.ajax({
+        type: "POST",
+        url: "http://access.alchemyapi.com/calls/html/HTMLGetRankedNamedEntities",
+        data: {
+            "apikey": "a5c2da39dc22ae367ecae6192dbc0832c19fe087",
+            "html": text,
+            "outputMode": "json"
+        },
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        success: function(data){
+            var names = [];
+            console.log(data);
+            for (var i = 0; i < data.entities.length; i++) {
+                if (data.entities[i].type == "Person") names.push(data.entities[i].text);
+            }
 
-    $.get(url, function(data){
-        var names = [];
-        for (var i = 0; i < data.entities.length; i++) {
-            if (data.entities[i].type == "Person") names.push(data.entities[i].text);
+            for (var i = 0; i < names.length; i++) {
+                text = text.replace(names[i], "<a href='#' class='castlist-actor'>" + names[i] + "</a>");
+            }
+            console.log(names);
+
+            $('div.article-page').html(text);
+
+            $("a.castlist-actor").click(function(event) {
+                event.preventDefault();
+                $("div.castlist-info").remove();
+
+                generateActorDiv($(this));
+            });
         }
-
-        for (var i = 0; i < names.length; i++) {
-            text = text.replace(names[i], "<a href='' class='castlist-actor'>" + names[i] + "</a>");
-        }
-
-        $('div.contentpage.currentpage').html(text);
-
-        $("a.castlist-actor").click(function(event) {
-            event.preventDefault();
-            $("div.castlist-info").remove();
-
-            generateActorDiv($(this));
-        });
     });
 }
 
@@ -75,7 +85,7 @@ function queryMySQL(name) {
 }
 
 function queryWikipediaDesc(name) {
-    $.getJSON("http://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&redirects=true&titles=" + name + "&callback=?",
+    $.getJSON("http://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&redirects=true&titles=" + name,
         function(data) {
             
             var desc = "";
@@ -94,7 +104,7 @@ function queryWikipediaDesc(name) {
 }
 
 function queryWikipediaImg(name) {
-    $.getJSON("http://en.wikipedia.org/w/api.php?format=json&action=query&prop=pageimages&redirects=true&titles=" + name + "&callback=?",
+    $.getJSON("http://en.wikipedia.org/w/api.php?format=json&action=query&prop=pageimages&redirects=true&titles=" + name,
         function(data) {
             var img_page_url = "";
             var first = true;
@@ -107,22 +117,26 @@ function queryWikipediaImg(name) {
 
             img_page_url = "File:" + img_page_url;
 
-            $.getJSON("http://en.wikipedia.org/w/api.php?format=json&action=query&prop=imageinfo&iiprop=url&titles=" + img_page_url + "&callback=?",
+            $.getJSON("http://en.wikipedia.org/w/api.php?format=json&action=query&prop=imageinfo&iiprop=url&titles=" + img_page_url,
                 function(data) {
                     var img_url = "";
                     var first = true;
                     $.each(data['query']['pages'], function(i, val) {
                         if (first) {
-                            img_url = val['imageinfo'][0]['url'];
+                            if (val['imageinfo']) img_url = val['imageinfo'][0]['url'];
                             first = false;
                             console.log(val);
                         }
                     });
 
-                    $("img.castlist-info-img").attr("src", img_url);
+                    if (img_url) $("img.castlist-info-img").attr("src", img_url);
+
                 });
         });
 }
 
-var text = $('div.contentpage.currentpage').html();
+
+console.log("Tagging...");
+var text = $('div.article-page').html();
 tagNames(text);
+console.log("Tagged");
