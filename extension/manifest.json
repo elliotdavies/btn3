@@ -3,13 +3,8 @@
   "version": "0.1",
   "manifest_version": 2,
   "description": "Automatically tags names in Times news articles and provides biographical information.",
-  // "content_scripts": [{
-  //   "js": [ "jquery.min.js", "castlist.js" ],
-  //   "matches": [ "http://*/", "https://*/"]
-  // }],
   "background": {
-    "scripts": [ "jquery.min.js", "castlist.js", "go.js" ],
-    "css": [ "style.css" ]
+    "scripts": [ "go.js" ]
   },
   "permissions": [
     "activeTab",
@@ -19,6 +14,5 @@
   "browser_action": {
     "default_icon": "icon.png",
     "default_title": "CastList"
-    // "default_popup": "popup.html"
   }
 }

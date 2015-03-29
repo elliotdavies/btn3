@@ -1,5 +1,4 @@
 function tagNames(text) {
-    console.log(text);
     $.ajax({
         type: "POST",
         url: "http://access.alchemyapi.com/calls/html/HTMLGetRankedNamedEntities",
@@ -13,7 +12,6 @@ function tagNames(text) {
         },
         success: function(data){
             var names = [];
-            console.log(data);
             for (var i = 0; i < data.entities.length; i++) {
                 if (data.entities[i].type == "Person") names.push(data.entities[i].text);
             }
@@ -21,7 +19,6 @@ function tagNames(text) {
             for (var i = 0; i < names.length; i++) {
                 text = text.replace(names[i], "<a href='#' class='castlist-actor'>" + names[i] + "</a>");
             }
-            console.log(names);
 
             $('div.contentpage').html(text);
 
@@ -125,7 +122,6 @@ function queryWikipediaImg(name) {
                         if (first) {
                             if (val['imageinfo']) img_url = val['imageinfo'][0]['url'];
                             first = false;
-                            console.log(val);
                         }
                     });
 
