@@ -23,19 +23,19 @@ function tagNames(text) {
             }
             console.log(names);
 
-            $('div.article-page').html(text);
+            $('div.contentpage').html(text);
 
             $("a.castlist-actor").click(function(event) {
                 event.preventDefault();
                 $("div.castlist-info").remove();
 
-                generateActorDiv($(this));
+                generateActorDiv($(this), event);
             });
         }
     });
 }
 
-function generateActorDiv(toappend) {
+function generateActorDiv(toappend, e) {
     var name = toappend.html();
 
     var div = $("<div class='castlist-info'></div>");
@@ -46,8 +46,8 @@ function generateActorDiv(toappend) {
     div.append("<p class='castlist-info-link'><a href=''>More on " + name + " from <em>The Times</em></a></p>");
 
     toappend.after(div.css({
-        "left": event.pageX,
-        "top": event.pageY
+        "left": e.clientX - toappend.offset.left,
+        "top": e.clientY - toappend.offset.top,
     }));
 
     $("a.castlist-info-close").click(function(event) {
@@ -137,6 +137,6 @@ function queryWikipediaImg(name) {
 
 
 console.log("Tagging...");
-var text = $('div.article-page').html();
+var text = $('div.contentpage').html();
 tagNames(text);
 console.log("Tagged");

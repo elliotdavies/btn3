@@ -6,19 +6,26 @@ div.castlist-info {
     border: 1px solid black;
     padding: 10px;
     margin: 0;
-    max-width: 45%;
+    width: 500px;
     border-radius: 25px;
 }
+    div.castlist-info p {
+        font-size: 14px!important;
+    }
+
     h1.castlist-info-name {
         width: 100%;
         text-align: center;
         font-weight: 200;
+        font-size: 22px!important;
+        margin-bottom: 10px;
     }
 
     p.castlist-info-link {
         width: 100%;
         border-top: 1px dotted black;
-        padding-top: 15px;
+        padding: 15px 0 0;
+        margin-top: 10px;
         float: left;
         text-align: center;
     }
