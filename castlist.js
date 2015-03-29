@@ -9,16 +9,21 @@ function tagNames(text) {
         for (var i = 0; i < data.entities.length; i++) {
             if (data.entities[i].type == "Person") names.push(data.entities[i].text);
         }
-        console.log(names);
 
         for (var i = 0; i < names.length; i++) {
-            // find names in text and surround with <a href="#" class="castlist-actor"></a>
+            text = text.replace(names[i], "<a href='' class='castlist-actor'>" + names[i] + "</a>");
         }
+
+        $('div.contentpage.currentpage').html(text);
+
+        $("a.castlist-actor").click(function(event) {
+            event.preventDefault();
+            $("div.castlist-info").remove();
+
+            generateActorDiv($(this));
+        });
     });
 }
-
-var text = $('div.contentpage.currentpage').html();
-tagNames(text);
 
 function generateActorDiv(toappend) {
     var name = toappend.html();
@@ -119,9 +124,5 @@ function queryWikipediaImg(name) {
         });
 }
 
-$("a.castlist-actor").click(function(event) {
-    event.preventDefault();
-    $("div.castlist-info").remove();
-
-    generateActorDiv($(this));
-});
+var text = $('div.contentpage.currentpage').html();
+tagNames(text);
